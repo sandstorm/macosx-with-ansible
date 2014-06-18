@@ -1,0 +1,35 @@
+# Install Oh-My-ZSH
+#
+# parameters:
+# (none)
+
+---
+
+- name: install git using homebrew
+  homebrew: name=git
+
+- name: assert binding of oh-my-zsh
+  command: test -d ~/.oh-my-zsh
+  ignore_errors: True
+  register: omz_bound
+
+- name: download oh-my-zsh
+  git: repo=git://github.com/robbyrussell/oh-my-zsh.git
+       dest=~/.oh-my-zsh
+  when: omz_bound|failed
+
+- name: backup .zshrc
+  command: cp ~/.zshrc ~/.zshrc.orig
+  ignore_errors: True
+  when: omz_bound|failed
+
+- name: change shell
+  command: chsh -s /bin/zsh
+  when: omz_bound|failed
+
+- name: Flow oh-my-zsh plugin
+  git: repo=git://github.com/sandstorm/oh-my-zsh-flow3-plugin.git
+       dest=~/.oh-my-zsh/custom/plugins/flow
+
+- name: install zshrc template
+  template: src=oh-my-zsh/zshrc-template.j2 dest=~/.zshrc

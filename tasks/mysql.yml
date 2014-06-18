@@ -1,0 +1,19 @@
+# Install MySQL
+#
+# parameters:
+# (none)
+
+---
+
+- name: install MySQL using homebrew
+  homebrew: name=mysql
+  tags: ['software']
+
+- command: chown -R {{ ansible_user_id }} /usr/local/var/mysql/
+  sudo: true
+
+- name: mysql start configuration
+  template: src=mysql/mysql-service.plist dest=~/Library/LaunchAgents/homebrew.mxcl.mysql.plist
+
+- name: mysql start configuration enable
+  command: launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.mysql.plist

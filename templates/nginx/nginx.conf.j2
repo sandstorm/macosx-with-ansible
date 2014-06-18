@@ -1,0 +1,38 @@
+
+#user  nobody;
+worker_processes  1;
+
+#error_log  logs/error.log;
+#error_log  logs/error.log  notice;
+#error_log  logs/error.log  info;
+
+#pid        logs/nginx.pid;
+
+
+events {
+    worker_connections  1024;
+}
+
+
+http {
+    include       mime.types;
+    default_type  application/octet-stream;
+
+    sendfile        on;
+
+    keepalive_timeout  65;
+
+    #gzip  on;
+
+    server {
+        listen       80 {%if default_host == 'localhost' %}default_server{% endif %};
+        server_name  localhost;
+
+        location / {
+            root   /Users/{{ ansible_user_id }}/src;
+            index  index.html index.htm;
+        }
+    }
+
+    include /usr/local/etc/nginx/sites/*;
+}

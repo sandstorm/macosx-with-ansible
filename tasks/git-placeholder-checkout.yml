@@ -1,0 +1,14 @@
+# Set up git placeholder checkout
+#
+# parameters:
+# - dest
+# - repo
+# - additional_install_steps (optional)
+
+---
+
+- name: create {{ dest }} directory
+  file: path={{ dest }} state=directory
+
+- name: Placeholder Git Checkout in {{ dest }}
+  template: src=git/SANDSTORM_INSTALL_INSTRUCTIONS.j2 dest={{ dest }}/SANDSTORM_INSTALL_INSTRUCTIONS.txt

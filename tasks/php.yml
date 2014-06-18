@@ -1,0 +1,48 @@
+# Install php
+#
+# parameters:
+# (none)
+
+---
+
+- name: make sure homebrew/dupes is installed
+  homebrew_tap: tap=homebrew/dupes
+  tags: ['software']
+
+- name: make sure homebrew/versions is installed
+  homebrew_tap: tap=homebrew/versions
+  tags: ['software']
+
+- name: make sure homebrew/homebrew-php is installed
+  homebrew_tap: tap=homebrew/php
+  tags: ['software']
+
+- name: install PHP 5.5
+  homebrew: name=php55 install_options=with-mysql,with-fpm
+  tags: ['software']
+
+- name: install composer
+  homebrew: name=composer
+  tags: ['software']
+
+- name: php configuration
+  template: src=php/php.ini.j2 dest=/usr/local/etc/php/5.5/php.ini
+  notify:
+    - restart php
+
+- name: extract PHP full version (and store it inside a variable)
+  shell: brew list php55 |  cut -d '/' -f6 | tail -n 1
+  register: php_full_version
+
+- name: php-fpm configuration
+  template: src=php/php-fpm.conf.j2 dest=/usr/local/etc/php/5.5/php-fpm.conf
+  notify:
+    - restart php
+
+- name: php-fpm start configuration
+  template: src=php/php-service.plist dest=~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+  notify:
+    - restart php
+
+- name: php-fpm start configuration enable
+  command: launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist

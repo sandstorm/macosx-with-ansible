@@ -1,0 +1,20 @@
+# Set up an NGINX (optionally PHP) vhost
+#
+# parameters:
+# - host: (hostname)
+# - document_root: (document root)
+# - additional_vhost_config: (optional)
+# - php_fpm_socket: (optional)
+
+---
+
+- include: etchosts.yml host={{ host }} ip=127.0.0.1
+
+- name: add {{ host }} to nginx configuration
+  template: src=nginx/nginx-vhost.j2 dest=/usr/local/etc/nginx/sites/{{ host }}
+  sudo: yes
+  tags:
+    - needs_sudo
+  notify:
+    - restart nginx
+

@@ -1,0 +1,42 @@
+# Install ruby via rbenv
+#
+# parameters:
+# - version: 2.1.1
+# - is_global: TRUE/FALSE
+
+---
+
+- name: install rbenv using homebrew
+  homebrew: name=rbenv
+
+- name: install ruby-build using homebrew
+  homebrew: name=ruby-build
+
+- name: Checks if ruby {{ version }} is installed
+  command: /bin/sh -c "rbenv versions | grep {{ version }}"
+  ignore_errors: yes
+  register: ruby_is_installed
+
+- name: install and build ruby {{ version }}
+  command: rbenv install {{ version }}
+  when: ruby_is_installed|failed
+
+# set the global
+- name: set {{ version }} as global ruby
+  command: rbenv global {{ version }}
+  when: is_global
+
+- name: ensure bash_profile presence
+  ignore_errors: True
+  file: path=~/.bash_profile state=touch
+
+- name: add shim to bash
+  lineinfile: dest=~/.bash_profile regexp="rbenv" line="eval \"$(rbenv init -)\"" state=present
+
+- name: ensure zshenv presence
+  ignore_errors: True
+  file: path=~/.zshrc state=touch
+
+- name: add shim to zsh
+  lineinfile: dest=~/.zshrc regexp="rbenv" line="eval \"$(rbenv init -)\"" state=present
+

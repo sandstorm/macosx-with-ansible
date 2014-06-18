@@ -1,0 +1,15 @@
+---
+- name: restart nginx
+  command: nginx -s reload
+  sudo: yes
+  tags:
+    - needs_sudo
+
+- name: restart php
+  command: "{{item}}"
+  with_items:
+    - launchctl unload -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+    - launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+
+- name: rehash rbenv
+  command: rbenv rehash

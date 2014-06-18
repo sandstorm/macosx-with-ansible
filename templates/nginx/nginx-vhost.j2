@@ -1,0 +1,24 @@
+server {
+  listen 80 {%if default_host == host %}default_server{% endif %};
+  root {{ document_root | expanduser }};
+  server_name {{ host }};
+
+  client_max_body_size 50M;
+
+  error_page 500 502 503 504 /50x.html;
+
+  location ~ \.php$ {
+    include /usr/local/etc/nginx/fastcgi_params;
+    keepalive_timeout 0;
+
+    fastcgi_pass {{ php_fpm_socket | default('unix:/usr/local/var/run/php-fpm-www') }};
+  }
+
+  {{ additional_vhost_config | default('') }}
+
+  # this is typo3 flow-specific; but I think that is OK :)
+  location ~ "^/_Resources/Persistent/" {
+    rewrite "(.{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+    rewrite "([a-z0-9]+/(.+/)?[a-f0-9]{40})/.+\.(.+)" /_Resources/Persistent/$1.$2 break;
+  }
+}

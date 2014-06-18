@@ -1,0 +1,37 @@
+---
+- hosts: all
+
+  vars:
+    default_host: "sandstormintranet.dev"
+
+  handlers:
+    - include: handlers/handlers.yml
+
+  tasks:
+    - include: tasks/_base.yml
+      vars:
+        email: your-name@email.address
+        name: Your Name
+        additional_gitignore: |
+          *.iml
+          .idea
+          atlassian-ide-plugin.xml
+
+    - include: projects/neosbase.yml
+    - include: projects/flowbase.yml
+
+
+    - name: configure typo3 git push
+      command: git config --global url."ssh://your-typo3-username@review.typo3.org:29418".pushInsteadOf git://git.typo3.org
+
+    - name: test.dev vhost
+      include: tasks/vhost.yml
+      tags: ['test']
+      vars:
+        host: "test.dev"
+        document_root: ~/src/test/
+        additional_vhost_config: |
+          location = / {
+            rewrite ^ /index.php;
+          }
+          try_files $uri $uri/ /index.php?$args;

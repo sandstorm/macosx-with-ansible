@@ -1,0 +1,13 @@
+# Set up the /etc/hosts
+#
+# parameters:
+# - host: (hostname)
+# - ip: (ip address)
+
+---
+
+- name: add {{ host }} to /etc/hosts
+  lineinfile: dest=/etc/hosts regexp='.*{{ host }}$' line="{{ ip }} {{ host }}" state=present
+  sudo: yes
+  tags:
+    - needs_sudo

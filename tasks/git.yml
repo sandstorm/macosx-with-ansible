@@ -1,0 +1,35 @@
+# Install Git and configure it appropriately for Sandstorm usage
+#
+# parameters:
+# - email: foo.bar@sandstorm-media.de
+# - name: Sebastian Kurfürst
+# - additional_gitignore
+
+---
+
+- name: install git using homebrew
+  homebrew: name=git
+  tags: ['software']
+
+- name: configure name
+  command: git config --global user.name "{{ name }}"
+
+- name: configure email
+  command: git config --global user.email "{{ email }}"
+
+- name: configure push
+  command: git config --global push.default simple
+
+- name: configure color
+  command: git config --global color.ui true
+
+- name: configure gitignore
+  command: git config --global core.excludesfile ~/.gitignore_global
+
+- name: create gitignore_global
+  template: src=git/gitignore_global dest=~/.gitignore_global
+
+- name: add "git lg" command
+  command: git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
+
+

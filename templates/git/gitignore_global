@@ -1,0 +1,3 @@
+.DS_Store
+SANDSTORM_INSTALL_INSTRUCTIONS.txt
+{{ additional_gitignore }}

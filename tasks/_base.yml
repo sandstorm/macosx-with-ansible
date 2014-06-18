@@ -1,0 +1,101 @@
+# Base Setup which is needed for everybody
+#
+# parameters:
+# - email: foo.bar@sandstorm-media.de
+# - name: Sebastian Kurfürst
+# - additional_gitignore: (optional)
+
+---
+
+- include: git.yml email={{ email }} name={{ name }} additional_gitignore="{{ additional_gitignore | default('') }}"
+- include: oh-my-zsh.yml
+- include: ruby.yml version=2.1.1 is_global=1
+- include: nginx.yml
+- include: mysql.yml
+- include: php.yml
+- include: nodejs.yml
+
+- name: 'Install homebrew cask (tap)'
+  homebrew_tap: tap=caskroom/cask
+  tags: ['software']
+
+- name: 'Install homebrew cask'
+  homebrew: name=brew-cask
+  tags: ['software']
+
+- homebrew_cask: name=gitx-l
+  tags: ['software']
+- homebrew_cask: name=java
+  tags: ['software']
+- homebrew_cask: name=iterm2
+  tags: ['software']
+- homebrew_cask: name=intellij-idea
+  tags: ['software']
+- homebrew_cask: name=phpstorm
+  tags: ['software']
+- homebrew_cask: name=openoffice
+  tags: ['software']
+- homebrew_cask: name=sequel-pro
+  tags: ['software']
+- homebrew_cask: name=teamviewer
+  tags: ['software']
+- homebrew_cask: name=skype
+  tags: ['software']
+- homebrew_cask: name=textwrangler
+  tags: ['software']
+- homebrew_cask: name=adobe-reader
+  tags: ['software']
+- homebrew_cask: name=adium
+  tags: ['software']
+- homebrew_cask: name=vlc
+  tags: ['software']
+- homebrew_cask: name=mou
+  tags: ['software']
+- homebrew_cask: name=virtualbox
+  tags: ['software']
+- homebrew_cask: name=vagrant
+  tags: ['software']
+
+
+
+- local_action: stat path=/Applications/activeCollabTimer3.app
+  register: activeCollabTimerExists
+
+- name: 'Install Active Collab Timer'
+  get_url: url=https://www.activecollab.com/downloads/category/9/package/167/release/1w2u8p12l94gjyhmqwa6uhmte/download dest=~/Applications/ActiveColabTimer.zip
+  tags: ['software']
+  when: activeCollabTimerExists.stat.exists == False
+
+- unarchive: src=~/Applications/ActiveColabTimer.zip dest=~/Applications
+  tags: ['software']
+  when: activeCollabTimerExists.stat.exists == False
+
+- command: rm ~/Applications/ActiveColabTimer.zip
+  tags: ['software']
+  when: activeCollabTimerExists.stat.exists == False
+
+
+- include: ../tasks/dmg-install.yml appName=Firefox dmgURL=https://download.mozilla.org/?product=firefox-29.0.1-SSL&os=osx&lang=de
+  tags: ['software']
+
+- include: ../tasks/dmg-install.yml appName=Thunderbird dmgURL=https://download.mozilla.org/?product=thunderbird-24.5.0&os=osx&lang=de
+  tags: ['software']
+
+- include: ../tasks/dmg-install.yml appName=GoogleChrome dmgURL=https://dl.google.com/chrome/mac/stable/GGRO/googlechrome.dmg
+  tags: ['software']
+
+  # Google Chrome ist nor working because of the space. The DMG is NOT mounted according to the filename of the dmg.
+
+- gem: name=bundler user_install=no
+  tags: ['software']
+  notify:
+    - rehash rbenv
+
+- gem: name=compass user_install=no
+  tags: ['software']
+  notify:
+    - rehash rbenv
+
+- name: 'Install groovy to /usr/local/Cellar/groovy/2.3.0/'
+  homebrew: name=groovy
+  tags: ['software']

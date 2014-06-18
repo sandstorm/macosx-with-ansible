@@ -1,0 +1,4 @@
+# Sandstorm Flow Intranet
+---
+
+- include: _typo3flow.yml name=flowbase repo=git://git.typo3.org/Flow/Distributions/Base.git

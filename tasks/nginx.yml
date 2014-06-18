@@ -1,0 +1,35 @@
+# Install nginx
+#
+# parameters:
+# (none)
+
+---
+
+- name: install nginx
+  homebrew: name=nginx
+  tags: ['software']
+
+- name: nginx configuration
+  template: src=nginx/nginx.conf.j2 dest=/usr/local/etc/nginx/nginx.conf
+  notify:
+    - restart nginx
+
+- name: nginx fastcgi_params configuration
+  template: src=nginx/fastcgi_params.j2 dest=/usr/local/etc/nginx/fastcgi_params
+  notify:
+    - restart nginx
+
+- name: nginx start configuration
+  template: src=nginx/nginx-service.plist dest=/Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  sudo: yes
+  tags:
+    - needs_sudo
+
+- name: nginx start configuration enable
+  command: launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  sudo: yes
+  tags:
+    - needs_sudo
+
+- name: create nginx/sites
+  file: path=/usr/local/etc/nginx/sites state=directory

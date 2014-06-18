@@ -1,0 +1,4 @@
+# Sandstorm Flow Intranet
+---
+
+- include: _typo3flow.yml name=neosbase repo=git://git.typo3.org/Neos/Distributions/Base.git

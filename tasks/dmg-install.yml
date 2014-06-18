@@ -1,0 +1,24 @@
+# Install App from dmg
+
+---
+
+- local_action: stat path=/Applications/{{ appName }}.app
+  register: app_exists
+
+- command: mkdir -p ./tmp/
+  when: app_exists.stat.exists == False
+
+- get_url: url={{ dmgURL }} dest=./tmp/{{ appName }}.dmg
+  when: app_exists.stat.exists == False
+
+- command: hdiutil attach ./tmp/{{ appName }}.dmg -nobrowse -mountpoint ./tmp/{{ appName }}
+  when: app_exists.stat.exists == False
+
+- command: /bin/sh -c "cp -aR ./tmp/{{ appName }}/*.app /Applications/{{ appName }}.app"
+  when: app_exists.stat.exists == False
+
+- command: hdiutil detach ./tmp/{{ appName }}/
+  when: app_exists.stat.exists == False
+
+- command: rm -R ./tmp/
+  when: app_exists.stat.exists == False

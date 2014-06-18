@@ -1,0 +1,18 @@
+# Install NodeJS
+#
+# parameters:
+# (none)
+
+---
+
+- name: install Node.JS using homebrew
+  homebrew: name=node
+  tags: ['software']
+
+- name: install grunt-cli
+  npm: name=grunt-cli global=1
+  tags: ['software']
+
+- name: install bower
+  npm: name=bower global=1
+  tags: ['software']
