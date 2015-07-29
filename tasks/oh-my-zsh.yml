@@ -15,7 +15,7 @@
 
 - name: download oh-my-zsh
   git: repo=git://github.com/robbyrussell/oh-my-zsh.git
-       dest=~/.oh-my-zsh
+       dest=~/.oh-my-zsh accept_hostkey=true
   when: omz_bound|failed
 
 - name: backup .zshrc

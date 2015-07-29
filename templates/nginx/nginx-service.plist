@@ -3,14 +3,14 @@
 <plist version="1.0">
   <dict>
     <key>Label</key>
-    <string>homebrew.mxcl.nginx</string>
+    <string>homebrew.mxcl.nginx-full</string>
     <key>RunAtLoad</key>
     <true/>
     <key>KeepAlive</key>
     <false/>
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/local/opt/nginx/bin/nginx</string>
+        <string>/usr/local/opt/nginx-full/bin/nginx</string>
         <string>-g</string>
         <string>daemon off;</string>
     </array>

@@ -1,0 +1,12 @@
+# Exports a shell evironment variable
+#
+# parameters:
+# - line=line to insert to bash and zsh profiles unless already existent
+
+---
+
+- name: line "{{ line }}" for bash
+  lineinfile: dest=~/.bash_profile line="{{ line }}" state=present create=yes
+
+- name: line "{{ line }}" for zsh
+  lineinfile: dest=~/.zshrc line="{{ line }}" state=present create=yes

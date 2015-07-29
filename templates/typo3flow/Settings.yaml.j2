@@ -1,0 +1,12 @@
+TYPO3:
+  Flow:
+    persistence:
+      backendOptions:
+        dbname: '{{ name }}'
+        driver: pdo_mysql
+        user: 'root'
+        password: ''
+
+# comment in the next two lines to enable SQL logging
+#      doctrine:
+#        sqlLogger: TYPO3\Flow\Persistence\Doctrine\Logging\SqlLogger

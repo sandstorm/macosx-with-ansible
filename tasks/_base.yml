@@ -6,42 +6,57 @@
 # - additional_gitignore: (optional)
 
 ---
-
-- include: git.yml email={{ email }} name={{ name }} additional_gitignore="{{ additional_gitignore | default('') }}"
-- include: oh-my-zsh.yml
-- include: ruby.yml version=2.1.1 is_global=1
-- include: nginx.yml
-- include: mysql.yml
-- include: php.yml
-- include: nodejs.yml
+- file: path=~/Library state=directory
+- file: path=~/Library/LaunchAgents state=directory
 
 - name: 'Install homebrew cask (tap)'
   homebrew_tap: tap=caskroom/cask
   tags: ['software']
 
+- name: 'update homebrew'
+  homebrew: update_homebrew=yes upgrade_all=no
+
 - name: 'Install homebrew cask'
-  homebrew: name=brew-cask
+  homebrew: name=brew-cask state=latest
+
+- include: git.yml email={{ email }} name={{ name }} additional_gitignore="{{ additional_gitignore | default('') }}"
+- include: oh-my-zsh.yml
+- include: ruby.yml version=2.2.2 is_global=1
+- include: nginx.yml
+- include: mysql.yml
+- include: php.yml
+- include: nodejs.yml
+
+
+
+- name: 'Install TextWrangler (REMINDER: install command line tools manually)'
+  homebrew_cask: name=textwrangler
   tags: ['software']
 
-- homebrew_cask: name=gitx-l
-  tags: ['software']
 - homebrew_cask: name=java
   tags: ['software']
 - homebrew_cask: name=iterm2
   tags: ['software']
 - homebrew_cask: name=intellij-idea
-  tags: ['software']
+  tags: ['software', 'intellij']
+- name: create codestyles directory of IntelliJ unless it exists
+  file: path=~/Library/Preferences/IntelliJIdea14/codestyles
+        state=directory
+        mode=0755
+  tags: ['software', 'intellij']
+- name: add Sandstorm codestyles to IntelliJ
+  copy: dest=~/Library/Preferences/IntelliJIdea14/codestyles/Sandstorm.xml
+        src=files/IntelliJIdea14/codestyles/Sandstorm.xml
+        force=yes
+        mode=644
+  tags: ['software', 'intellij']
 - homebrew_cask: name=phpstorm
   tags: ['software']
 - homebrew_cask: name=openoffice
   tags: ['software']
 - homebrew_cask: name=sequel-pro
   tags: ['software']
-- homebrew_cask: name=teamviewer
-  tags: ['software']
 - homebrew_cask: name=skype
-  tags: ['software']
-- homebrew_cask: name=textwrangler
   tags: ['software']
 - homebrew_cask: name=adobe-reader
   tags: ['software']
@@ -55,24 +70,24 @@
   tags: ['software']
 - homebrew_cask: name=vagrant
   tags: ['software']
-
-
-
-- local_action: stat path=/Applications/activeCollabTimer3.app
-  register: activeCollabTimerExists
-
-- name: 'Install Active Collab Timer'
-  get_url: url=https://www.activecollab.com/downloads/category/9/package/167/release/1w2u8p12l94gjyhmqwa6uhmte/download dest=~/Applications/ActiveColabTimer.zip
+- name: install ack
+  homebrew: name=ack
   tags: ['software']
-  when: activeCollabTimerExists.stat.exists == False
 
-- unarchive: src=~/Applications/ActiveColabTimer.zip dest=~/Applications
+- homebrew_cask: name=omnigraffle
   tags: ['software']
-  when: activeCollabTimerExists.stat.exists == False
 
-- command: rm ~/Applications/ActiveColabTimer.zip
+- homebrew: name=wget
   tags: ['software']
-  when: activeCollabTimerExists.stat.exists == False
+- homebrew: name=jq
+  tags: ['software']
+
+# needed for invoice PDF conversion
+# /usr/local/bin/gm convert -density 300 source.pdf -density 72 -page A4 converted.pdf
+- homebrew: name=graphicsmagick
+  tags: ['software']
+- homebrew: name=ghostscript
+  tags: ['software']
 
 
 - include: ../tasks/dmg-install.yml appName=Firefox dmgURL=https://download.mozilla.org/?product=firefox-29.0.1-SSL&os=osx&lang=de
@@ -99,3 +114,18 @@
 - name: 'Install groovy to /usr/local/Cellar/groovy/2.3.0/'
   homebrew: name=groovy
   tags: ['software']
+
+
+- name: create ssh config.d directory
+  file: path=~/.ssh/config.d state=directory
+  tags: ['ssh']
+
+- name: Common SSH Config
+  template: src=ssh/commonConfig dest=~/.ssh/config.d/common
+  notify:
+    - regenerate ssh config
+  tags: ['ssh']
+
+- name: regenerate ssh config
+  assemble: src=~/.ssh/config.d dest=~/.ssh/config backup=yes
+  tags: ['ssh']

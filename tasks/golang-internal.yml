@@ -1,0 +1,40 @@
+
+---
+
+- name: install golang
+  homebrew: name=go
+  tags: ['software']
+
+- name: install mercurial
+  homebrew: name=mercurial
+  tags: ['software']
+
+- name: create golang project directories
+  file: path={{ gopath }}/{{ item }} state=directory
+  with_items:
+    - bin
+    - pkg
+    - src/sandstormmedia/helloWorld
+
+- name: set $GOPATH
+  lineinfile: dest=~/{{ item }}
+    regexp='^.*GOPATH=.*$'
+    line='export GOPATH={{ gopath }}'
+    state=present
+  with_items:
+    - .bash_profile
+    - .zshrc
+
+- name: add $GOPATH/bin to $PATH
+  lineinfile: dest=~/{{ item }}
+    line='export PATH=${PATH}:{{ gopath }}/bin'
+    state=present
+  with_items:
+    - .bash_profile
+    - .zshrc
+
+# TODO: is always markes as 'changed' even if nothing has changed
+- name: download go packet for go tour 'code.google.com/p/go-tour/gotour'
+  shell: go get -v -d code.google.com/p/go-tour/gotour chdir={{ gopath }}
+  environment:
+    GOPATH: "{{ gopath }}"

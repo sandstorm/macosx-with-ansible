@@ -11,3 +11,4 @@
   sudo: yes
   tags:
     - needs_sudo
+    - vhost

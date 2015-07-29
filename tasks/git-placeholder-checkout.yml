@@ -7,7 +7,7 @@
 
 ---
 
-- name: create {{ dest }} directory
+- name: create {{ dest }} directory if not existing
   file: path={{ dest }} state=directory
 
 - name: Placeholder Git Checkout in {{ dest }}

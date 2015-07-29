@@ -7,13 +7,13 @@
 ---
 
 - name: install rbenv using homebrew
-  homebrew: name=rbenv
+  homebrew: name=rbenv state=latest
 
 - name: install ruby-build using homebrew
-  homebrew: name=ruby-build
+  homebrew: name=ruby-build state=latest
 
 - name: Checks if ruby {{ version }} is installed
-  command: /bin/sh -c "rbenv versions | grep {{ version }}"
+  shell: rbenv versions | grep {{ version }}
   ignore_errors: yes
   register: ruby_is_installed
 
@@ -26,17 +26,4 @@
   command: rbenv global {{ version }}
   when: is_global
 
-- name: ensure bash_profile presence
-  ignore_errors: True
-  file: path=~/.bash_profile state=touch
-
-- name: add shim to bash
-  lineinfile: dest=~/.bash_profile regexp="rbenv" line="eval \"$(rbenv init -)\"" state=present
-
-- name: ensure zshenv presence
-  ignore_errors: True
-  file: path=~/.zshrc state=touch
-
-- name: add shim to zsh
-  lineinfile: dest=~/.zshrc regexp="rbenv" line="eval \"$(rbenv init -)\"" state=present
-
+- include: configureShell.yml line="eval \\\"$(rbenv init -)\\\""

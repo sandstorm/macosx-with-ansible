@@ -32,4 +32,6 @@
 - name: add "git lg" command
   command: git config --global alias.lg "log --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit --date=relative"
 
-
+- name: 'Install GitX (REMINDER: enable command line tools manually)'
+  homebrew_cask: name=gitx
+  tags: ['software']

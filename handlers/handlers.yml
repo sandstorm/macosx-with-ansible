@@ -13,3 +13,6 @@
 
 - name: rehash rbenv
   command: rbenv rehash
+
+- name: regenerate ssh config
+  assemble: src=/Users/{{ ansible_user_id }}/.ssh/config.d dest=/Users/{{ ansible_user_id }}/.ssh/config backup=yes

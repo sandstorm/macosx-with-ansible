@@ -14,7 +14,7 @@
 - command: hdiutil attach ./tmp/{{ appName }}.dmg -nobrowse -mountpoint ./tmp/{{ appName }}
   when: app_exists.stat.exists == False
 
-- command: /bin/sh -c "cp -aR ./tmp/{{ appName }}/*.app /Applications/{{ appName }}.app"
+- shell: cp -aR ./tmp/{{ appName }}/*.app /Applications/{{ appName }}.app
   when: app_exists.stat.exists == False
 
 - command: hdiutil detach ./tmp/{{ appName }}/

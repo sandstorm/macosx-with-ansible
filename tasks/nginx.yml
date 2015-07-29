@@ -5,9 +5,27 @@
 
 ---
 
-- name: install nginx
-  homebrew: name=nginx
-  tags: ['software']
+
+# UNINSTALL default nginx
+- name: uninstall "simple" nginx
+  homebrew: name=nginx state=absent
+- stat: path=/Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  register: defaultNginxLauncher
+- command: launchctl unload -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  sudo: yes
+  when: defaultNginxLauncher.stat.exists == True
+  tags:
+    - needs_sudo
+- file: path=/Library/LaunchDaemons/homebrew.mxcl.nginx.plist state=absent
+  sudo: yes
+  tags:
+    - needs_sudo
+
+# REINSTALL nginx
+- homebrew_tap: tap=homebrew/nginx
+- name: install "full" nginx
+  homebrew: name=nginx-full install_options=with-lua-module
+  notify: restart nginx
 
 - name: nginx configuration
   template: src=nginx/nginx.conf.j2 dest=/usr/local/etc/nginx/nginx.conf
@@ -20,13 +38,13 @@
     - restart nginx
 
 - name: nginx start configuration
-  template: src=nginx/nginx-service.plist dest=/Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  template: src=nginx/nginx-service.plist dest=/Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
   sudo: yes
   tags:
     - needs_sudo
 
 - name: nginx start configuration enable
-  command: launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx.plist
+  command: launchctl load -w /Library/LaunchDaemons/homebrew.mxcl.nginx-full.plist
   sudo: yes
   tags:
     - needs_sudo

@@ -17,9 +17,15 @@
   homebrew_tap: tap=homebrew/php
   tags: ['software']
 
+- name: install homebrew-curl
+  homebrew: name=curl install_options=with-openssl
+
 - name: install PHP 5.5
-  homebrew: name=php55 install_options=with-mysql,with-fpm
+  # NOTE: without-snmp is required on Yosemite; see http://git.io/NBAOvA for details
+  homebrew: name=php55 install_options=with-mysql,with-fpm,with-homebrew-curl,with-homebrew-openssl,without-snmp
   tags: ['software']
+  notify:
+    - restart php
 
 - name: install composer
   homebrew: name=composer
@@ -46,3 +52,15 @@
 
 - name: php-fpm start configuration enable
   command: launchctl load -w ~/Library/LaunchAgents/homebrew.mxcl.php55.plist
+
+- name: install PHP 5.5 XDebug
+  homebrew: name=php55-xdebug
+  tags: ['software']
+  notify:
+    - restart php
+
+- name: install PHP 5.5 xhprof
+  homebrew: name=php55-xhprof
+  tags: ['software']
+  notify:
+    - restart php

@@ -1,0 +1,11 @@
+---
+- hosts: all
+
+  vars:
+    default_host: "localhost"
+
+  handlers:
+    - include: handlers/handlers.yml
+
+  tasks:
+    - include: handlers/handlers.yml

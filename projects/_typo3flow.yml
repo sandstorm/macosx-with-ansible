@@ -3,9 +3,12 @@
 # parameters:
 # - name: (e.g.) sandstormintranet
 # - repo: ssh repository to use as basis
+# - generateSettings: if TRUE, settings shall be defined.
+# - skipGitCheckout: if TRUE, skip the git checkout command.
 ---
 
 - include: ../tasks/git-placeholder-checkout.yml dest="~/src/{{ name }}" repo={{ repo }} additional_install_steps="composer install"
+  when: skipGitCheckout is not defined
 
 # DEVELOPMENT Context
 - include: ../tasks/vhost.yml
@@ -48,8 +51,8 @@
 
 
 # Databases
-- command: /bin/sh -c "echo CREATE DATABASE IF NOT EXISTS {{ name }} | mysql -uroot"
-- command: /bin/sh -c "echo CREATE DATABASE IF NOT EXISTS {{ name }}_behat | mysql -uroot"
+- shell: echo CREATE DATABASE IF NOT EXISTS {{ name }} | mysql -uroot
+- shell: echo CREATE DATABASE IF NOT EXISTS {{ name }}_behat | mysql -uroot
 
 # Behat Settings
 - file: path=~/src/{{ name }}/Configuration/Development/Behat state=directory
@@ -63,3 +66,11 @@
   template: src=typo3flow/BehatSettings.yaml.j2 dest=~/src/{{ name }}/Configuration/Testing/Behat/Settings.yaml backup=yes
   notify:
     - restart nginx
+
+
+
+- file: path=~/src/{{ name }}/Configuration/ state=directory
+  when: generateSettings is defined
+- name:
+  template: src=typo3flow/Settings.yaml.j2 dest=~/src/{{ name }}/Configuration/Settings.yaml backup=yes
+  when: generateSettings is defined
