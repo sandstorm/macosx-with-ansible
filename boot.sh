@@ -4,7 +4,10 @@
 # Forked from https://raw.githubusercontent.com/osxc/xc-boot/master/boot.sh
 #
 
-
+if [ "$(whoami)" == "root" ]; then
+   echo "This script must NOT be run as root." 1>&2
+   exit 1
+fi
 
 ANSIBLE_BINARY="/usr/local/bin/ansible"
 ANSIBLE_MINIMUM_VERSION="1.6"
@@ -33,7 +36,7 @@ if [[ $? != 0 ]] ; then
     echo "Installing homebrew, as it was not found"
     # Install Homebrew
     # https://github.com/mxcl/homebrew/wiki/installation
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.github.com/Homebrew/homebrew/go/install)"
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 else
     echo "found homebrew, updating it"
     brew update
