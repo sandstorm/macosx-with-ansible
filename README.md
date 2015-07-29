@@ -1,6 +1,6 @@
 # Sandstorm Ansible Installation
 
-For a description of the background of this project, see http://sandstorm-media.de/blog/2014/06/27/ansible-mac-os-x.html
+For a description of the background of this project, see https://sandstorm.de/de/blog/ansible-mac-os-x.html
 
 ## Prerequisite: Removing Boxen
 
